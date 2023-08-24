@@ -1,61 +1,67 @@
-// Importing the database.js file, which provides access to the MySQL database.
+// database.js dosyasını içe aktarıyoruz. Bu, MySQL veritabanına erişim sağlar.
 var database = require("../database");
 
-// Used to display the main page.
+// Ana sayfayı görüntülemek için kullanılır.
 exports.getIndex = (req, res) => {
+  // Oturum bilgisini şablona ileterek "index" sayfasını görüntüler.
   res.render("index", { session: req.session });
 };
 
-// Function that handles user login.
+// Kullanıcı girişini işleyen işlev.
 exports.login = (req, res) => {
-  // Retrieving user email address and password from the request.
+  // İstekten kullanıcı e-posta adresi ve şifresini alıyoruz.
   var user_email_address = req.body.user_email_address;
   var user_password = req.body.user_password;
 
-  // Email and password validation.
+  // E-posta ve şifre kontrolü.
   if (user_email_address && user_password) {
-    // Query the database for the user.
+    // Veritabanından kullanıcıyı sorgulama.
     query = `
       SELECT * FROM user_login 
       WHERE user_email = "${user_email_address}"
     `;
 
+    // Veritabanı sorgusunu çalıştır.
     database.query(query, function (error, data) {
-      // If data is found.
+      // Eğer veri bulunursa.
       if (data.length > 0) {
         for (var count = 0; count < data.length; count++) {
-          // Password verification.
+          // Şifre doğrulama.
           if (data[count].user_password == user_password) {
-            // Add the user's ID to the session object.
+            // Oturum nesnesine kullanıcı kimliği ekleniyor.
             req.session.user_id = data[count].user_id;
 
-            // Redirect to the main page.
-            res.redirect("/admin");
+            // Ana sayfaya yönlendiriliyor.
+            res.redirect("/admin"); // Düzeltildi
           } else {
-            // Send an incorrect password message.
-            res.send("Incorrect Password");
+            // Hatalı şifre mesajı gönderiliyor.
+            res.send("Yanlış Şifre");
           }
         }
       } else {
-        // Send an incorrect email address message.
-        res.send("Incorrect Email Address");
+        // Hatalı e-posta adresi mesajı gönderiliyor.
+        res.send("Hatalı E-posta Adresi");
       }
       res.end();
     });
   } else {
-    // If parameters are missing, send a message.
-    res.send("Please Enter Email Address and Password Details");
+    // Eğer parametreler eksikse mesaj gönderiliyor.
+    res.send("Lütfen E-posta Adresi ve Şifre Bilgilerini Girin");
     res.end();
   }
 };
 
-// Kullanıcının logout işlemi yapması gerektiğinde bu işlevi kullanabilirsiniz.
+// Kullanıcı oturumunu sonlandıran işlev.
 exports.logout = (req, res) => {
-  // Oturumu sonlandırın ve ana sayfaya yönlendirin.
+  // Oturumu sonlandır.
   req.session.destroy();
+
+  // Ana sayfaya yönlendir.
   res.redirect("/");
 };
 
+// Admin panelini görüntülemek için kullanılır.
 exports.getAdminPanel = (req, res) => {
-  res.render("admin", { session: req.session });
+  // Oturum bilgisini şablona ileterek "admin/index" sayfasını görüntüler.
+  res.render("admin/index", { session: req.session });
 };
