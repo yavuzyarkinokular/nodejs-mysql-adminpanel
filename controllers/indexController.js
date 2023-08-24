@@ -3,7 +3,7 @@ var database = require("../database");
 
 // Used to display the main page.
 exports.getIndex = (req, res) => {
-  res.render("index", { title: "Express", session: req.session });
+  res.render("index", { session: req.session });
 };
 
 // Function that handles user login.
@@ -49,14 +49,13 @@ exports.login = (req, res) => {
   }
 };
 
-// Function to end the user session.
+// Kullanıcının logout işlemi yapması gerektiğinde bu işlevi kullanabilirsiniz.
 exports.logout = (req, res) => {
-  // Terminate the session.
+  // Oturumu sonlandırın ve ana sayfaya yönlendirin.
   req.session.destroy();
-
-  // Redirect to the main page.
   res.redirect("/");
 };
+
 exports.getAdminPanel = (req, res) => {
-  res.render("admin", { title: "Express", session: req.session });
+  res.render("admin", { session: req.session });
 };
