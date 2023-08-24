@@ -6,7 +6,6 @@ const indexController = require("../controllers/indexController");
 router.get("/", indexController.getIndex);
 
 router.post("/login", indexController.login);
-
 router.get("/logout", indexController.logout);
 router.get("/admin", indexController.getAdminPanel);
 
