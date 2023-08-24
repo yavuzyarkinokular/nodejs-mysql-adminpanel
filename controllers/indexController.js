@@ -1,59 +1,59 @@
-// database.js dosyasını içe aktarıyoruz. Bu, MySQL veritabanına erişim sağlar.
+// Importing the database.js file, which provides access to the MySQL database.
 var database = require("../database");
 
-// Ana sayfayı görüntülemek için kullanılır.
+// Used to display the main page.
 exports.getIndex = (req, res) => {
   res.render("index", { title: "Express", session: req.session });
 };
 
-// Kullanıcı girişini işleyen işlev.
+// Function that handles user login.
 exports.login = (req, res) => {
-  // İstekten kullanıcı e-posta adresi ve şifresini alıyoruz.
+  // Retrieving user email address and password from the request.
   var user_email_address = req.body.user_email_address;
   var user_password = req.body.user_password;
 
-  // E-posta ve şifre kontrolü.
+  // Email and password validation.
   if (user_email_address && user_password) {
-    // Veritabanından kullanıcıyı sorgulama.
+    // Query the database for the user.
     query = `
       SELECT * FROM user_login 
       WHERE user_email = "${user_email_address}"
     `;
 
     database.query(query, function (error, data) {
-      // Eğer veri bulunursa.
+      // If data is found.
       if (data.length > 0) {
         for (var count = 0; count < data.length; count++) {
-          // Şifre doğrulama.
+          // Password verification.
           if (data[count].user_password == user_password) {
-            // Oturum nesnesine kullanıcı kimliği ekleniyor.
+            // Add the user's ID to the session object.
             req.session.user_id = data[count].user_id;
 
-            // Ana sayfaya yönlendiriliyor.
+            // Redirect to the main page.
             res.redirect("/");
           } else {
-            // Hatalı şifre mesajı gönderiliyor.
+            // Send an incorrect password message.
             res.send("Incorrect Password");
           }
         }
       } else {
-        // Hatalı e-posta adresi mesajı gönderiliyor.
+        // Send an incorrect email address message.
         res.send("Incorrect Email Address");
       }
       res.end();
     });
   } else {
-    // Eğer parametreler eksikse mesaj gönderiliyor.
+    // If parameters are missing, send a message.
     res.send("Please Enter Email Address and Password Details");
     res.end();
   }
 };
 
-// Kullanıcı oturumunu sonlandıran işlev.
+// Function to end the user session.
 exports.logout = (req, res) => {
-  // Oturumu sonlandır.
+  // Terminate the session.
   req.session.destroy();
 
-  // Ana sayfaya yönlendir.
+  // Redirect to the main page.
   res.redirect("/");
 };
