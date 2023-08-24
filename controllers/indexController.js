@@ -30,7 +30,7 @@ exports.login = (req, res) => {
             req.session.user_id = data[count].user_id;
 
             // Redirect to the main page.
-            res.redirect("/");
+            res.redirect("/admin");
           } else {
             // Send an incorrect password message.
             res.send("Incorrect Password");
@@ -56,4 +56,7 @@ exports.logout = (req, res) => {
 
   // Redirect to the main page.
   res.redirect("/");
+};
+exports.getAdminPanel = (req, res) => {
+  res.render("admin", { title: "Express", session: req.session });
 };
